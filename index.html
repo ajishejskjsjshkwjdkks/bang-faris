@@ -207,6 +207,8 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
 .credit{font-size:12px;color:rgba(155,178,190,.6);margin-top:36px}
 
 /* ---------- Lightbox ---------- */
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));z-index:35;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--gold);color:var(--bg);font-size:14px;font-weight:600;padding:10px 18px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.35);white-space:nowrap;transition:opacity .3s,transform .3s}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #lightbox{position:fixed;inset:0;z-index:45;background:rgba(2,10,15,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
 #lightbox img{max-width:100%;max-height:80vh;border-radius:10px;object-fit:contain}
 #lbCap{color:var(--soft);font-size:14px;margin-top:14px;text-align:center;max-width:520px}
@@ -412,6 +414,8 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
     </div>
   </div>
 </div>
+
+<button id="toast" type="button" onclick="this.classList.remove('show');document.querySelector('#pesan').scrollIntoView({behavior:'smooth'})"></button>
 
 <div id="lightbox" hidden><button class="lb-close" aria-label="Tutup">×</button><img id="lbImg" alt=""><p id="lbCap"></p></div>
 
@@ -641,6 +645,7 @@ async function buka(p, manual) {
     }
     try { sessionStorage.setItem('faris_pw', p); } catch (e) {}
     tampilkan(data);
+    mulaiPantau(p);
     $('#gate').classList.add('hide');
     setTimeout(() => $('#gate') && $('#gate').remove(), 900);
     $('#soundBtn').hidden = false;
@@ -656,15 +661,62 @@ async function buka(p, manual) {
 (() => { let s = ''; try { s = sessionStorage.getItem('faris_pw') || ''; } catch (e) {} if (s) buka(s, false); })();
 
 /* ================= Render ================= */
-function tampilkan(d) {
+function pasangData(d) {
   DATA = d;
   S = { ...DEFAULTS };
   Object.entries(d.pengaturan || {}).forEach(([k, v]) => { if (String(v ?? '').trim()) S[k] = String(v).trim(); });
   PESAN = d.pesan || [];
+}
+
+function tampilkan(d) {
+  pasangData(d);
   $('#app').hidden = false;
   renderHero(); renderIntro(); renderPesan(); renderLinimasa(d.linimasa || []); renderAlbum(d.album || []);
   renderLombok(); renderDoa(); renderPenutup(); renderBuku();
   amati();
+}
+
+/* ================= Pantau pesan baru (tanpa refresh) ================= */
+const JEDA_PANTAU = 20000; // cek tiap 20 detik
+let pwAktif = '', pantauTimer = null, sedangCek = false;
+const tandaData = d => JSON.stringify([d.pesan, d.linimasa, d.album, d.pengaturan]);
+
+function mulaiPantau(p) {
+  pwAktif = p;
+  if (!API_URL || pantauTimer) return;
+  pantauTimer = setInterval(perbarui, JEDA_PANTAU);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) perbarui(); });
+}
+
+async function perbarui() {
+  if (document.hidden || !pwAktif || sedangCek || !DATA) return;
+  sedangCek = true;
+  try {
+    const d = await ambil(pwAktif);
+    if (!d.ok || tandaData(d) === tandaData(DATA)) return;
+    const jumlahLama = PESAN.length;
+    const aturLama = JSON.stringify(DATA.pengaturan);
+    pasangData(d);
+    renderIntro(); renderPesan(); renderLinimasa(d.linimasa || []); renderAlbum(d.album || []);
+    renderDoa(); renderPenutup(); renderBuku();
+    if (JSON.stringify(d.pengaturan) !== aturLama) { renderHero(); renderLombok(); }
+    amati();
+    if (sheet.classList.contains('open') && cur >= 0) $('#sheetCount').textContent = `${cur + 1} / ${PESAN.length}`;
+    const baru = PESAN.length - jumlahLama;
+    if (baru > 0) toast(`${baru} pesan baru masuk`);
+  } catch (e) {
+    /* koneksi putus sebentar, coba lagi di putaran berikutnya */
+  } finally {
+    sedangCek = false;
+  }
+}
+
+function toast(teks) {
+  const t = $('#toast');
+  t.textContent = teks + ' · Lihat';
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 6000);
 }
 
 function renderHero() {
