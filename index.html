@@ -52,7 +52,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;-webki
 .shake{animation:shake .45s}
 @keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:999px;border:1px solid rgba(224,189,127,.45);color:var(--gold);font-weight:500;font-size:15px;transition:background .2s,transform .15s}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:999px;border:1px solid rgba(224,189,127,.45);color:var(--gold);font-weight:500;font-size:15px;transition:background .2s,transform .15s}
 .btn:hover{background:rgba(224,189,127,.08)}
 .btn:active{transform:scale(.97)}
 .btn.solid{background:var(--gold);color:var(--bg);border-color:var(--gold)}
@@ -693,10 +693,12 @@ async function buka(p, manual) {
 (() => { let s = ''; try { s = sessionStorage.getItem('faris_pw') || ''; } catch (e) {} if (s) buka(s, false); })();
 
 /* ================= Render ================= */
+const adek = t => String(t).replace(/kawan([-‑ ])kawan/g, 'adek$1adek').replace(/Kawan([-‑ ])kawan/g, 'Adek$1adek').replace(/KAWAN([-‑ ])KAWAN/g, 'ADEK$1ADEK');
+
 function pasangData(d) {
   DATA = d;
   S = { ...DEFAULTS };
-  Object.entries(d.pengaturan || {}).forEach(([k, v]) => { if (String(v ?? '').trim()) S[k] = String(v).trim(); });
+  Object.entries(d.pengaturan || {}).forEach(([k, v]) => { if (String(v ?? '').trim()) S[k] = adek(String(v).trim()); });
   PESAN = d.pesan || [];
 }
 
