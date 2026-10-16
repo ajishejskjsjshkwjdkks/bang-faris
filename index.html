@@ -286,7 +286,7 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg>
     </div>
     <p class="eyebrow">Ada titipan</p>
-    <h1>Kiriman dari kawan‑kawan</h1>
+    <h1>Kiriman dari adek‑adek</h1>
     <p class="sub">Masukin sandinya dulu, Bang.</p>
     <input id="pw" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Sandi" placeholder="••••">
     <div class="gate-actions"><button class="btn solid" id="gateBtn" type="submit">Buka</button></div>
@@ -319,7 +319,7 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
     <div class="wrap">
       <div class="head rv">
         <div class="num">01</div>
-        <h2>Pesan dari kawan‑kawan</h2>
+        <h2>Pesan dari adek‑adek</h2>
         <p class="lede">Tiap amplop dari satu orang. Ketuk buat buka.</p>
       </div>
       <div class="progress rv" id="progress"><div class="bar"><i id="barFill"></i></div><span id="progText"></span></div>
@@ -336,7 +336,7 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
       </div>
       <div class="tl" id="timeline"></div>
       <div id="albumSec" hidden>
-        <h3 class="album-head rv">Arsip foto dari kawan-kawan</h3>
+        <h3 class="album-head rv">Arsip foto dari adek-adek</h3>
         <p class="rv">Potongan-potongan yang masih kami simpan.</p>
         <div class="album" id="album"></div>
       </div>
@@ -363,7 +363,7 @@ footer{position:relative;z-index:1;text-align:center;padding:24px 20px calc(110p
     <div class="wrap">
       <div class="head rv">
         <div class="num">04</div>
-        <h2>Doa dari kawan‑kawan</h2>
+        <h2>Doa dari adek‑adek</h2>
         <p class="lede">Satu kalimat dari tiap orang, buat bekal di perjalanan.</p>
       </div>
       <div class="doa-list" id="doaList"></div>
@@ -451,7 +451,7 @@ const DEFAULTS = {
   logo: '',
   penutup_judul: '',
   penutup_teks: '',
-  tanda_tangan: 'Kawan-kawan Ashabul Istiqomah'
+  tanda_tangan: 'Adek-adek Ashabul Istiqomah'
 };
 
 const PENUTUP_BAWAAN =
@@ -741,7 +741,7 @@ function renderIntro() {
   const { A, B } = koordinat();
   const km = [...A, ...B].some(isNaN) ? null : jarakKm(A, B);
   $('#introText').innerHTML =
-    `<p>Halaman ini kami siapin bareng-bareng buat ente. Isinya pesan dari kawan-kawan, potongan perjalanan ${esc(S.nama_kelompok)} sejak ${esc(S.tahun_berdiri)}, dan doa buat langkah ente berikutnya.</p>
+    `<p>Halaman ini kami siapin bareng-bareng buat ente. Isinya pesan dari adek-adek, potongan perjalanan ${esc(S.nama_kelompok)} sejak ${esc(S.tahun_berdiri)}, dan doa buat langkah ente berikutnya.</p>
      <p>Bukanya pelan-pelan aja, Bang. Satu-satu.</p>`;
   $('#stats').innerHTML =
     `<div><b>${PESAN.length}</b><span>pesan</span></div>
@@ -753,7 +753,7 @@ function renderIntro() {
 function renderPesan() {
   const el = $('#cards');
   if (!PESAN.length) {
-    el.innerHTML = '<p class="empty">Pesan dari kawan-kawan masih dikumpulin. Mampir lagi nanti ya, Bang.</p>';
+    el.innerHTML = '<p class="empty">Pesan dari adek-adek masih dikumpulin. Mampir lagi nanti ya, Bang.</p>';
     $('#progress').hidden = true; return;
   }
   el.innerHTML = PESAN.map((m, i) => {
@@ -946,7 +946,7 @@ function renderBuku() {
   </section>
 
   <section class="bk-sec">
-    <h2>Pesan dari kawan‑kawan</h2>
+    <h2>Pesan dari adek‑adek</h2>
     ${PESAN.map(m => {
       const meta = [m.sejak && 'Ikut sejak ' + m.sejak, m.kesibukan].filter(Boolean).join(' · ');
       return `<article class="bk-msg">
@@ -983,7 +983,7 @@ function renderBuku() {
     <p><b>${esc(S.tujuan_keterangan)}</b> · berangkat ${esc(fmtTanggal(S.tanggal_berangkat))}</p>
   </section>
 
-  ${doaList.length ? `<section class="bk-sec"><h2>Doa dari kawan‑kawan</h2>
+  ${doaList.length ? `<section class="bk-sec"><h2>Doa dari adek‑adek</h2>
     ${doaList.map(m => `<div class="bk-doa"><p>“${esc(m.doa)}”</p><span>— ${esc(m.nama)}</span></div>`).join('')}
   </section>` : ''}
 
